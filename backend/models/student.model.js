@@ -13,7 +13,8 @@ const studentSchema = new mongoose.Schema({
     mobile: {
         type: Number,
         required: true,
-        unique: true
+        unique: true,
+
     },
     pendingFees: {
         type: Number,

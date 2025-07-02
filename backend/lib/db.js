@@ -1,3 +1,5 @@
+//* This file contains the functions and mehtods that are used to establish connection with database and perfom the CRUD operations on the database
+
 import mongoose from "mongoose";
 import studentModel from "../models/student.model.js";
 import accountantModel from "../models/accountant.model.js";
@@ -12,6 +14,8 @@ export const connectDB = async () => {
 }
 
 export class DbFunctions{
+
+
     static async getStudentDetails(rollNo,mobile){
         // return
         try{
@@ -41,8 +45,6 @@ export class DbFunctions{
 
 
 
-
-    //below are the functions used by the accountant to manage student fees
     static async getStudentByRollNo(rollNo) {
         try{
             const student = await studentModel.findOne({ rollNo });

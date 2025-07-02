@@ -18,7 +18,7 @@ export const generateTokenForStudent = async (student) => {
 export const generateTokenForAccountant = (user) => {
     try{
         const JWT_SECRET = process.env.JWT_SECRET
-        const token = jwt.sign(user,JWT_SECRET,{
+        const token = jwt.sign({username:user.username},JWT_SECRET,{
             expiresIn: '24h'
         })
         return token;

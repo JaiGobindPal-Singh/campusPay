@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import studentRoutes from "./routes/student.routes.js";
+import accountantRoutes from "./routes/accountant.routes.js";
 import { connectDB } from "./lib/db.js";
 config();
 const app = express();
@@ -14,9 +15,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser());
+
 app.use('/api/login',authRoutes);
 app.use('/api/student',studentRoutes);
-
+app.use('/api/accountant',accountantRoutes);;
 
 app.get("/", (req, res) => {
     res.send("Welcome to the CMS Backend!");

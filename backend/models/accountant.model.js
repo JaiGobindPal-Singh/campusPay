@@ -6,6 +6,15 @@ const accountantSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    fullname:{
+        type: String,
+        required: true
+    },
+    mobile:{
+        type: String,
+        required: true,
+        unique: true,
+    },
     password: {
         type: String,
         required: true
