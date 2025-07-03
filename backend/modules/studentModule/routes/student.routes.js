@@ -1,5 +1,5 @@
 import express from 'express';
-import { validateStudent } from '../middlewares/checkAuth.js';
+import { validateStudent } from '../middlewares/protectRoute.js';
 import { payFees, getPreviousTransactions, printReciept }from '../controllers/student.controller.js';
 const router = express.Router();
 

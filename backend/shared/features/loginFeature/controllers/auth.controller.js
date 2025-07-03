@@ -1,6 +1,6 @@
-import { generateTokenForStudent, verifyToken, generateTokenForAccountant } from "../lib/jwt.js";
-import { DbFunctions } from "../lib/db.js";
-import { verifyAccountantPassword } from "../lib/bcrypt.js";
+import { generateTokenForStudent, verifyToken, generateTokenForAccountant } from "../../../lib/jwt.js";
+import { DbFunctions } from "../../../lib/db.js";
+import { verifyPassword } from "../../../lib/bcrypt.js";
 export const studentLogin = async (req, res) => {
     try {
         const { rollNo, mobile } = req.body;
@@ -47,11 +47,11 @@ export const accountantLogin = async (req, res) => {
 
 
         //fetching the accountant data from the database
-        const accountant = await DbFunctions.getAccountantDetails(username, password);
+        const accountant = await DbFunctions.getAccountantDetails(username);
         if (!accountant) {
             return res.status(404).json({ message: "Accountant not found" });
         }
-        const isPasswordMatch = verifyAccountantPassword(password, accountant.password);
+        const isPasswordMatch = verifyPassword(password, accountant.password);
         if (!isPasswordMatch) {
             return res.status(401).json({ message: "Invalid username or password" });
         }
@@ -83,12 +83,12 @@ export const adminLogin = (req, res) => {
             return res.status(400).json({ message: "Username and password are required" });
         }
         if (username != process.env.uuuuad || password != process.env.password) {
-            console.log(username, process.env.uuuuad, password, process.env.password);
             return res.status(401).json({ message: "Invalid username or password" });
         }
         // Generate a token for the admin [using the same function as accountant]
-        const token = generateTokenForAccountant({
-            username: process.env.username,
+        const generateTokenForAdmin = generateTokenForAccountant;
+        const token = generateTokenForAdmin({
+            username: process.env.uuuuad,
             fullname: "Admin",
             mobile: "0000000000",
         });
@@ -96,13 +96,50 @@ export const adminLogin = (req, res) => {
         return res.status(200).json({
             message: "Admin login successful",
             data: {
-                username: process.env.username,
+                username: process.env.uuuuad,
                 fullname: "Admin",
                 mobile: "0000000000",
             }
         });
     } catch (err) {
         console.log('error in admin login controller', err);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export const clerkLogin = (req, res) => {
+    try{
+        const {username, password} = req.body;
+        if(!username || !password){
+            return res.status(400).json({ message: "Username and password are required" });
+        }
+        //fetching the clerk data from the database
+        const clerk = DbFunctions.getClerkDetails(username);
+        if(!clerk){
+            return res.status(404).json({ message: "Clerk not found" });
+        }
+        const isPasswordMatch = verifyPassword(password, clerk.password);
+        if(!isPasswordMatch){
+            return res.status(401).json({ message: "Invalid username or password" });
+        }
+        //sending the response with clerk data and setting a cookie
+        const generateTokenForClerk = generateTokenForAccountant;
+        res.cookie("clerk", generateTokenForClerk({
+            username: clerk.username,
+            fullname: clerk.fullname,
+            mobile: clerk.mobile,
+        }));
+        return res.status(200).json({
+            message: "Clerk login successful",
+            data: {
+                username: clerk.username,
+                fullname: clerk.fullname,
+                mobile: clerk.mobile,
+            }
+        });
+
+    }catch(err){
+        console.log('error in clerk login controller', err);
         return res.status(500).json({ message: "Internal server error" });
     }
 }

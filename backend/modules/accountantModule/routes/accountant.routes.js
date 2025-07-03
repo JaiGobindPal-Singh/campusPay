@@ -1,7 +1,7 @@
 //*This file contains the routes for the accountant module
 import express from 'express';
 const router = express.Router();
-import { validateAccountant } from '../middlewares/checkAuth.js';
+import { validateAccountant } from '../middlewares/protectRoute.js';
 import { payFees, getPreviousTransactions, printReciept,addFine, scholarship } from '../controllers/accountant.controller.js';
 
 
