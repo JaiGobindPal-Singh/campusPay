@@ -18,7 +18,7 @@ export const payFees = async (req, res) => {
         });
     }catch(err){
         console.log('error in payFees controller', err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error:err.message});
     }
 }
 export const getStudentDetails = async (req, res) => {
@@ -39,7 +39,7 @@ export const getStudentDetails = async (req, res) => {
         });
     }catch(err){
         console.log('error in getStudentDetails controller', err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: err.message });
     }
 }
 export const getPreviousTransactions = async (req, res) => {
@@ -60,7 +60,7 @@ export const getPreviousTransactions = async (req, res) => {
         });
     }catch(err){
         console.log('error in getPreviousTransactions controller', err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error:err.message });
     }
 }
 
@@ -85,7 +85,7 @@ export const printReceipt = async (req, res) => {
 
     }catch(err){
         console.log('error in printReceipt controller', err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: err.message });
     }
 
 }
@@ -109,7 +109,7 @@ export const addFine = async (req, res) => {
         });
     }catch(err){
         console.log('error in addFine controller', err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: err.message });
     }
 }
 
@@ -130,6 +130,6 @@ export const scholarship = async (req, res) => {
         });
     }catch(err){
         console.log('error in scholarship controller', err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: err.message });
     }
 }

@@ -15,6 +15,6 @@ export const validateAdmin = (req, res, next) => {
         next();
     } catch (error) {
         console.error("Error in admin validation middleware:", error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: error.message });
     }
 }

@@ -14,6 +14,6 @@ export const validateClerk = (req, res, next) => {
         next();
     }catch(err){
         console.log('error in validateclerk middleware', err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: err.message });
     }
 }

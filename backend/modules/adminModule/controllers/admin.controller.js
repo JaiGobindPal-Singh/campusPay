@@ -25,7 +25,7 @@ export const createNewAccountant = async (req, res) => {
         });
     } catch (error) {
         console.error("Error creating accountant:", error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({error:error.message});
     }
 }
 
@@ -55,6 +55,6 @@ export const createNewClerk = async (req, res) => {
         });
     } catch (error) {
         console.error("Error creating clerk:", error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: error.message });
     }
 }

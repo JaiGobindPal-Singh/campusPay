@@ -38,27 +38,33 @@ export class DbFunctions{
             await student.save();
             return receipt;
         }catch(err){
-            console.log("Error in generateReceipt:", err);
-            throw new Error("Error in generateReceipt db function");
+            console.log("Error in generateReceipt db function:", err);
+            throw err;
         }
     }
     static async getStudentDetails(rollNo,mobile){
         // return
         try{
-            const student = studentModel.findOne({ rollNo, mobile });
+            const student =await studentModel.findOne({ rollNo, mobile });
+            if (!student) {
+                throw new Error("Student not found");
+            }
             return student;
         }catch(error){
-            console.log("Error in getStudentDetails:", error);
-            throw new Error("Error in getStudentDetails db function");
+            console.log("Error in getStudentDetails db function:", error);
+            throw error;
         }
     }
     static async getAccountantDetails(username) {
         try{
-            const accountant = accountantModel.findOne({ username });
+            const accountant =await accountantModel.findOne({ username });
+            if (!accountant) {
+                throw new Error("Accountant not found");
+            }
             return accountant; 
         }catch(error){
-            console.log("Error in getAccountantDetails:", error);
-            throw new Error("Error in getAccountantDetails db function");
+            console.log("Error in getAccountantDetails db function:", error);
+            throw error;
         }
     }
     static async createNewAccountant(username,fullname,mobile, password) {
@@ -79,16 +85,20 @@ export class DbFunctions{
             await accountant.save();
             return accountant;
         }catch(error){
-            console.log("Error in createAccountant:", error);
-            throw new Error("Error creating new accountant db function");
+            console.log("Error in createAccountant db function:", error);
+            throw error;
         }
     }
     static async addNewStudent(rollNo, name, mobile, degree) {
         try {
-            const pendingFees = degreeModel.findOne({ degree: degree.toLowerCase() }).fees;
-            if (!pendingFees) {
-                throw new Error("Degree not found or fees not defined");
+            if (!rollNo || !name || !mobile || !degree) {
+                throw new Error("All fields are required");
             }
+            const result =await degreeModel.findOne({ degree: degree.toLowerCase() });
+            if (!result) {
+                throw new Error("Degree not found");
+            }
+            const pendingFees = result.fees;
             const student = new studentModel({
                 rollNo,
                 name,
@@ -100,8 +110,8 @@ export class DbFunctions{
             await student.save();
             return student;
         } catch (error) {
-            console.log("Error in addNewStudent:", error);
-            throw new Error("Error adding new student db function");
+            console.log("Error in addNewStudent db function:", error);
+            throw error;
         }
     }
     static async createNewClerk(username,fullname,mobile, password) {
@@ -123,17 +133,20 @@ export class DbFunctions{
             await clerk.save();
             return clerk;
         }catch(err){
-            console.log('error in create new clerk;',err);
-            throw new Error("Error creating new clerk db function");
+            console.log('error in create new clerk db function;',err);
+            throw err;
         }
     }
     static async getStudentByRollNo(rollNo) {
         try{
             const student = await studentModel.findOne({ rollNo });
+            if (!student) {
+                throw new Error("Student not found");
+            }
             return student;
         }catch(error){
-            console.log("Error in getStudentByRollNo:", error);
-            throw new Error("Error in getStudentByRollNo db function");
+            console.log("Error in getStudentByRollNo db function:", error);
+            throw error;
         }
     }
     static async studentFeePaymentByAccountant(rollNo,amount){
@@ -165,8 +178,8 @@ export class DbFunctions{
             return this.generateReceipt(rollNo,tempAmount);
             
         }catch(err){
-            console.log("Error in StudentFeePaymentByAccountant:", err);
-            throw new Error("error in StudentFeePaymentByAccountant db function");
+            console.log("Error in StudentFeePaymentByAccountant db function:", err);
+            throw err;
         }
     }
     static async addFine(rollNo,fineAmount){
@@ -186,8 +199,8 @@ export class DbFunctions{
             await student.save();
             return student;
         }catch(err){
-            console.log("Error in UpdateFine:", err);
-            throw new Error("error in UpdateFine db function");
+            console.log("Error in UpdateFine db function:", err);
+            throw err;
         }
     }
     static async addScholarship(rollNo, scholarshipAmount) {
@@ -212,17 +225,20 @@ export class DbFunctions{
             await student.save();
             return student;
     }catch(err){
-            console.log("Error in addScholarship:", err);
-            throw new Error("error in addScholarship db function");
+            console.log("Error in addScholarship db function:", err);
+            throw err;
         }
     }
     static async getClerkDetails(username, password) {
         try{
-            const clerk = clerkModel.findOne({ username});
+            const clerk =await clerkModel.findOne({ username});
+            if (!clerk) {
+                throw new Error("Clerk not found");
+            }
             return clerk;
         }catch(error){
-            console.log("Error in getClerkDetails:", error);
-            throw new Error("Error in getClerkDetails db function");
+            console.log("Error in getClerkDetails db function:", error);
+            throw error;
         }
     }
     static async getStudentPreviousTransactions(rollNo) {
@@ -231,17 +247,17 @@ export class DbFunctions{
             if (!student) {
                 throw new Error("Student not found");
             }
-            return student.previousTransactions? student.previousTransactions : [];
+            return student.previousTransactions;
         }catch(error){
             console.log("Error in getPreviousTransactions db function:", error);
-            throw new Error("Error in getPreviousTransactions db function");
+            throw error;
         }
     }
     //*defineDegreeFees also creates a new degree if it does not exist
     static async defineDegreeFees(degree,fees){
         try{
             degree = degree.toLowerCase();
-            const fetchedDegree = degreeModel.findOne({ degree });
+            const fetchedDegree =await degreeModel.findOne({ degree });
             if(fetchedDegree){
                 fetchedDegree.fees = fees;
                 fetchedDegree.save();
@@ -252,8 +268,8 @@ export class DbFunctions{
                 return newDegree;
             }
         }catch(err){
-            console.log("Error in defineDegreeFees:", err);
-            throw new Error("Error in defineDegreeFees db function");
+            console.log("Error in defineDegreeFees db function:", err);
+            throw err;
         }
 
     }

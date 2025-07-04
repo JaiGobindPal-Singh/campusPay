@@ -34,6 +34,7 @@ export const studentLogin = async (req, res) => {
         })
     } catch (err) {
         console.log('error in student login controller');
+        res.status(500).json({ error:err.message});
     }
 };
 export const accountantLogin = async (req, res) => {
@@ -72,6 +73,7 @@ export const accountantLogin = async (req, res) => {
         });
     } catch (err) {
         console.log('error in accountant login controller', err);
+        res.status(400).json({ error:err.message });
     }
 };
 
@@ -103,32 +105,34 @@ export const adminLogin = (req, res) => {
         });
     } catch (err) {
         console.log('error in admin login controller', err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error:err.message });
     }
 }
 
-export const clerkLogin = (req, res) => {
+export const clerkLogin = async (req, res) => {
     try{
         const {username, password} = req.body;
         if(!username || !password){
             return res.status(400).json({ message: "Username and password are required" });
         }
         //fetching the clerk data from the database
-        const clerk = DbFunctions.getClerkDetails(username);
+        const clerk =await DbFunctions.getClerkDetails(username);
         if(!clerk){
             return res.status(404).json({ message: "Clerk not found" });
         }
+        console.log(clerk)
         const isPasswordMatch = verifyPassword(password, clerk.password);
         if(!isPasswordMatch){
             return res.status(401).json({ message: "Invalid username or password" });
         }
         //sending the response with clerk data and setting a cookie
         const generateTokenForClerk = generateTokenForAccountant;
-        res.cookie("clerk", generateTokenForClerk({
+        const token = generateTokenForClerk({
             username: clerk.username,
             fullname: clerk.fullname,
             mobile: clerk.mobile,
-        }));
+        });
+        res.cookie("clerk",token);
         return res.status(200).json({
             message: "Clerk login successful",
             data: {
@@ -140,6 +144,6 @@ export const clerkLogin = (req, res) => {
 
     }catch(err){
         console.log('error in clerk login controller', err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error:err.message});
     }
 }

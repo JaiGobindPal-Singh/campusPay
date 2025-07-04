@@ -12,7 +12,7 @@ export const generateTokenForStudent = async (student) => {
         return token;
     }catch(err){
         console.log('error in generating token for student', err);
-        return null;
+        throw err;
     }
 }
 export const generateTokenForAccountant = (user) => {
@@ -36,6 +36,6 @@ export const verifyToken = (token) => {
         const JWT_SECRET = process.env.JWT_SECRET
         return jwt.verify(token, JWT_SECRET);
     } catch (error) {
-        return null; // or handle the error as needed
+        throw error;
     }
 }

@@ -6,6 +6,7 @@ export const verifyPassword = async (password, hash) => {
         return isMatch;
     } catch (error) {
         console.log('Error verifying password:', error);
+        throw error;
     }
 }
 
@@ -17,5 +18,6 @@ export const hashPassword = async (password) => {
         return hash;
     } catch (error) {
         console.log('Error hashing password:', error);
+        throw error;
     }
 }
