@@ -2,12 +2,14 @@
 import express from 'express';
 const router = express.Router();
 import { validateAccountant } from '../middlewares/protectRoute.js';
-import { payFees, getPreviousTransactions, printReciept,addFine, scholarship } from '../controllers/accountant.controller.js';
+import { payFees, getPreviousTransactions, printReceipt,addFine, scholarship, getStudentDetails } from '../controllers/accountant.controller.js';
+import { get } from 'http';
 
 
+router.post('/studentdetails',validateAccountant,getStudentDetails);
 router.post('/payfees',validateAccountant,payFees);
 router.post('/previoustransactions',validateAccountant,getPreviousTransactions);
-router.post('/printreciept',validateAccountant,printReciept);
+router.post('/printreceipt',validateAccountant,printReceipt);
 router.post('/addfine',validateAccountant,addFine);
 router.post('/scholarship',validateAccountant,scholarship);
 

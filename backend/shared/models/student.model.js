@@ -27,6 +27,10 @@ const studentSchema = new mongoose.Schema({
     degree: {
         type: String,
         required: true
+    },
+    previousTransactions : {
+        type: [Object],
+        default: []
     }
 })
 

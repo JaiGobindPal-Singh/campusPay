@@ -6,6 +6,7 @@ import accountantModel from "../models/accountant.model.js";
 import clerkModel from "../models/clerk.model.js";
 import degreeModel from "../models/degree.model.js";
 import { hashPassword } from "./bcrypt.js";
+import generateUniqueId from "./generateUniqueId.js";
 export const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGOURI);
@@ -17,6 +18,30 @@ export const connectDB = async () => {
 }
 
 export class DbFunctions{
+    static async generateReceipt(rollNo, amount,) {
+        try{
+            const student = await studentModel.findOne({ rollNo });
+            if (!student) {
+                throw new Error("Student not found");
+            }
+            // Create a new receipt object
+            const receipt = {
+                id: generateUniqueId(10),
+                amount,
+                date: new Date()  // Creates a Date object with current date and time
+            };
+            // Add the receipt to the student's previous transactions
+            if (!student.previousTransactions) {
+                student.previousTransactions = [];
+            }
+            student.previousTransactions.push(receipt);
+            await student.save();
+            return receipt;
+        }catch(err){
+            console.log("Error in generateReceipt:", err);
+            throw new Error("Error in generateReceipt db function");
+        }
+    }
     static async getStudentDetails(rollNo,mobile){
         // return
         try{
@@ -24,6 +49,7 @@ export class DbFunctions{
             return student;
         }catch(error){
             console.log("Error in getStudentDetails:", error);
+            throw new Error("Error in getStudentDetails db function");
         }
     }
     static async getAccountantDetails(username) {
@@ -32,6 +58,7 @@ export class DbFunctions{
             return accountant; 
         }catch(error){
             console.log("Error in getAccountantDetails:", error);
+            throw new Error("Error in getAccountantDetails db function");
         }
     }
     static async createNewAccountant(username,fullname,mobile, password) {
@@ -53,6 +80,7 @@ export class DbFunctions{
             return accountant;
         }catch(error){
             console.log("Error in createAccountant:", error);
+            throw new Error("Error creating new accountant db function");
         }
     }
     static async addNewStudent(rollNo, name, mobile, degree) {
@@ -73,6 +101,7 @@ export class DbFunctions{
             return student;
         } catch (error) {
             console.log("Error in addNewStudent:", error);
+            throw new Error("Error adding new student db function");
         }
     }
     static async createNewClerk(username,fullname,mobile, password) {
@@ -95,7 +124,7 @@ export class DbFunctions{
             return clerk;
         }catch(err){
             console.log('error in create new clerk;',err);
-            throw new Error("Error creating new clerk");
+            throw new Error("Error creating new clerk db function");
         }
     }
     static async getStudentByRollNo(rollNo) {
@@ -104,31 +133,40 @@ export class DbFunctions{
             return student;
         }catch(error){
             console.log("Error in getStudentByRollNo:", error);
+            throw new Error("Error in getStudentByRollNo db function");
         }
     }
     static async studentFeePaymentByAccountant(rollNo,amount){
         try{
+            const tempAmount = amount; // Store the original amount for receipt generation
             const student = await studentModel.findOne({rollNo});
             if (!student) {
                 throw new Error("Student not found");
             }
 
             // Update the student's pending fees and fine
-            if(amount > student.pendingFees + student.fine){
+            if(amount > (student.pendingFees + student.fine)){
                 throw new Error("Amount exceeds pending fees");
             }
             if(amount >= student.pendingFees){
                 amount -= student.pendingFees;
                 student.pendingFees = 0;
+            }else{
+                student.pendingFees -= amount;
+                amount = 0;
             }
             student.fine -= amount;
+
+            //handle negative fine 
+            if(student.fine < 0) {
+                student.fine = 0; // Ensure fine does not go negative
+            }
             await student.save();
-            return student;
+            return this.generateReceipt(rollNo,tempAmount);
+            
         }catch(err){
             console.log("Error in StudentFeePaymentByAccountant:", err);
-            return res.status(500).json({
-                message: "Internal server error"
-            });
+            throw new Error("error in StudentFeePaymentByAccountant db function");
         }
     }
     static async addFine(rollNo,fineAmount){
@@ -137,16 +175,19 @@ export class DbFunctions{
             if (!student) {
                 throw new Error("Student not found");
             }
-
+            if(fineAmount <= 0) {
+                throw new Error("Fine amount must be greater than zero");
+            }
             // Update the student's fine
+            if(student.fine < 0){
+                student.fine = 0; // Ensure fine does not go negative
+            }
             student.fine += fineAmount; 
             await student.save();
             return student;
         }catch(err){
             console.log("Error in UpdateFine:", err);
-            return res.status(500).json({
-                message: "Internal server error"
-            });
+            throw new Error("error in UpdateFine db function");
         }
     }
     static async addScholarship(rollNo, scholarshipAmount) {
@@ -160,15 +201,19 @@ export class DbFunctions{
             if(scholarshipAmount >= student.pendingFees) {
                 scholarshipAmount -= student.pendingFees;
                 student.pendingFees = 0;
+            }else{
+                student.pendingFees -= scholarshipAmount;
+                scholarshipAmount = 0;
             }
             student.fine -= scholarshipAmount;
+            if(student.fine < 0) {
+                student.fine = 0; // Ensure fine does not go negative
+            }
             await student.save();
             return student;
     }catch(err){
             console.log("Error in addScholarship:", err);
-            return res.status(500).json({
-                message: "Internal server error"
-            });
+            throw new Error("error in addScholarship db function");
         }
     }
     static async getClerkDetails(username, password) {
@@ -177,9 +222,21 @@ export class DbFunctions{
             return clerk;
         }catch(error){
             console.log("Error in getClerkDetails:", error);
+            throw new Error("Error in getClerkDetails db function");
         }
     }
-
+    static async getStudentPreviousTransactions(rollNo) {
+        try{
+            const student = await studentModel.findOne({ rollNo });
+            if (!student) {
+                throw new Error("Student not found");
+            }
+            return student.previousTransactions? student.previousTransactions : [];
+        }catch(error){
+            console.log("Error in getPreviousTransactions db function:", error);
+            throw new Error("Error in getPreviousTransactions db function");
+        }
+    }
     //*defineDegreeFees also creates a new degree if it does not exist
     static async defineDegreeFees(degree,fees){
         try{
@@ -196,7 +253,9 @@ export class DbFunctions{
             }
         }catch(err){
             console.log("Error in defineDegreeFees:", err);
+            throw new Error("Error in defineDegreeFees db function");
         }
 
     }
+    
 }
