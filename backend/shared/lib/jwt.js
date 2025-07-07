@@ -1,32 +1,33 @@
 import jwt from 'jsonwebtoken';
 
 export const generateTokenForStudent = async (student) => {
-    try{
+    try {
         const JWT_SECRET = process.env.JWT_SECRET
         const token = jwt.sign({
-            rollNo:student.rollNo,
-            mobile:student.mobile
-        },JWT_SECRET,{
+            rollNo: student.rollNo,
+            mobile: student.mobile
+        }, JWT_SECRET, {
             expiresIn: '12h'
         })
         return token;
-    }catch(err){
-        console.log('error in generating token for student', err);
+    } catch (err) {
+        process.env.NODE_ENV == "development" && console.log('error in generating token for student', err);
         throw err;
     }
 }
 export const generateTokenForAccountant = (user) => {
-    try{
+    try {
         const JWT_SECRET = process.env.JWT_SECRET
-        const token = jwt.sign({username:user.username,
-            fullname:user.fullname,
-            mobile:user.mobile
-        },JWT_SECRET,{
+        const token = jwt.sign({
+            username: user.username,
+            fullname: user.fullname,
+            mobile: user.mobile
+        }, JWT_SECRET, {
             expiresIn: '24h'
         })
         return token;
-    }catch(err){
-        console.log('error in generating token for accountant', err);
+    } catch (err) {
+        process.env.NODE_ENV == "development" && console.log('error in generating token for accountant', err);
         return null;
     }
 }

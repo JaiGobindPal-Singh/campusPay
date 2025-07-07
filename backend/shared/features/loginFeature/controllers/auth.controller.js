@@ -38,7 +38,7 @@ export const studentLogin = async (req, res) => {
             }
         })
     } catch (err) {
-        console.log('error in student login controller');
+        process.env.NODE_ENV == "development" && console.log('error in student login controller');
         res.status(500).json({ error:err});
     }
 };
@@ -78,7 +78,7 @@ export const accountantLogin = async (req, res) => {
             }
         });
     } catch (err) {
-        console.log('error in accountant login controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in accountant login controller', err);
         res.status(400).json({ error:err.message });
     }
 };
@@ -108,7 +108,7 @@ export const adminLogin = (req, res) => {
             }
         });
     } catch (err) {
-        console.log('error in admin login controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in admin login controller', err);
         return res.status(500).json({ error:err.message });
     }
 }
@@ -123,7 +123,7 @@ export const clerkLogin = async (req, res) => {
         if(!clerk){
             return res.status(404).json({ message: "Clerk not found" });
         }
-        console.log(clerk)
+        process.env.NODE_ENV == "development" && console.log(clerk)
         const isPasswordMatch = verifyPassword(password, clerk.password);
         if(!isPasswordMatch){
             return res.status(401).json({ message: "Invalid username or password" });
@@ -146,7 +146,7 @@ export const clerkLogin = async (req, res) => {
         });
 
     }catch(err){
-        console.log('error in clerk login controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in clerk login controller', err);
         return res.status(500).json({ error:err.message});
     }
 }

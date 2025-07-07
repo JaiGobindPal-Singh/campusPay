@@ -18,7 +18,7 @@ export const createRazorpayOrder = async (amount) => {
         return order;
 
     } catch (error) {
-        console.log('Error creating Razorpay order:', error);
+        process.env.NODE_ENV == "development" && console.log('Error creating Razorpay order:', error);
         throw new Error('Failed to create Razorpay order');
     }
 }
@@ -33,7 +33,19 @@ export const verifyRazorpayPayment = async (signature,order_id,payment_id) => {
         return generatedSignature === signature;
 
     } catch (err) {
-        console.log('Error verifying Razorpay payment:', err);
+        process.env.NODE_ENV == "development" && console.log('Error verifying Razorpay payment:', err);
         throw new Error('Failed to verify Razorpay payment');
+    }
+}
+export const reverifyRazorpayPayment = async (payment_id) => {
+    try{
+        const paymentDetails = await razorpayInstance.payments.fetch(payment_id);
+        if (!paymentDetails || paymentDetails.status !== 'captured') {
+            return false;
+        }
+        return true;
+    }catch(err){
+        process.env.NODE_ENV == "development" && console.log('Error re-verifying Razorpay payment:', err);
+        throw new Error('Failed to re-verify Razorpay payment');
     }
 }

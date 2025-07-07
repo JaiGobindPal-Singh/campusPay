@@ -10,7 +10,7 @@ function generateUniqueId() {
         }
         return uniqueId;
     }catch(err) {
-        console.log('Error generating unique ID:', err);
+        process.env.NODE_ENV == "development" && console.log('Error generating unique ID:', err);
         throw new Error('Failed to generate unique ID',err);
     }
 }

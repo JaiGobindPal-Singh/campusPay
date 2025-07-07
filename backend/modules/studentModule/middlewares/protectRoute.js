@@ -15,7 +15,7 @@ export const validateStudent = (req, res, next) => {
         req.student = studentData; // Attach student data to the request object for further use
         next();
     }catch(err){
-        console.log('error in validateStudent middleware', err);
+        process.env.NODE_ENV == "development" && console.log('error in validateStudent middleware', err);
         return res.status(500).json({ error:err.message});
     }
 }

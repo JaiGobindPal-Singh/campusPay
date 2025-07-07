@@ -5,7 +5,7 @@ export const verifyPassword = async (password, hash) => {
         const isMatch = await bcrypt.compare(password, hash);
         return isMatch;
     } catch (error) {
-        console.log('Error verifying password:', error);
+        process.env.NODE_ENV == "development" && console.log('Error verifying password:', error);
         throw error;
     }
 }
@@ -15,7 +15,7 @@ export const hashPassword = async (password) => {
         const hash = await bcrypt.hash(password, salt);
         return hash;
     } catch (error) {
-        console.log('Error hashing password:', error);
+        process.env.NODE_ENV == "development" && console.log('Error hashing password:', error);
         throw error;
     }
 }

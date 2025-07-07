@@ -17,7 +17,7 @@ export const payFees = async (req, res) => {
             rollNo,
         });
     }catch(err){
-        console.log('error in payFees controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in payFees controller', err);
         return res.status(500).json({ error:err.message});
     }
 }
@@ -38,7 +38,7 @@ export const getStudentDetails = async (req, res) => {
             student: result
         });
     }catch(err){
-        console.log('error in getStudentDetails controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in getStudentDetails controller', err);
         return res.status(500).json({ error: err.message });
     }
 }
@@ -59,7 +59,7 @@ export const getPreviousTransactions = async (req, res) => {
             transactions: result
         });
     }catch(err){
-        console.log('error in getPreviousTransactions controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in getPreviousTransactions controller', err);
         return res.status(500).json({ error:err.message });
     }
 }
@@ -83,7 +83,7 @@ export const printReceipt = async (req, res) => {
         });
 
     }catch(err){
-        console.log('error in printReceipt controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in printReceipt controller', err);
         return res.status(500).json({ error: err.message });
     }
 
@@ -106,7 +106,7 @@ export const addFine = async (req, res) => {
             fineAmount
         });
     }catch(err){
-        console.log('error in addFine controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in addFine controller', err);
         return res.status(500).json({ error: err.message });
     }
 }
@@ -127,7 +127,26 @@ export const scholarship = async (req, res) => {
             scholarshipAmount
         });
     }catch(err){
-        console.log('error in scholarship controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in scholarship controller', err);
+        return res.status(500).json({ error: err.message });
+    }
+}
+export const getCurrentAccountantDetails = (req, res) => {
+    try{
+        const accountant = req.accountant;  //req.accountant is set by the validateAccountant middleware
+        if(!accountant) {
+            return res.status(404).json({ message: "Accountant not found" });
+        }
+        res.status(200).json({
+            message: "Accountant details fetched successfully",
+            data: {
+                username: accountant.username,
+                fullname: accountant.fullname,
+                mobile: accountant.mobile
+            }
+        });
+    }catch(err){
+        process.env.NODE_ENV == "development" && console.log('error in getCurrentAccountantDetails controller', err);
         return res.status(500).json({ error: err.message });
     }
 }

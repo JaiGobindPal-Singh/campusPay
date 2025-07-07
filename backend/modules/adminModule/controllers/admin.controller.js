@@ -24,7 +24,7 @@ export const createNewAccountant = async (req, res) => {
             },
         });
     } catch (error) {
-        console.log("Error creating accountant:", error);
+        process.env.NODE_ENV == "development" && console.log("Error creating accountant:", error);
         return res.status(500).json({error:error.message});
     }
 }
@@ -53,7 +53,24 @@ export const createNewClerk = async (req, res) => {
             },
         });
     } catch (error) {
-        console.log("Error creating clerk:", error);
+        process.env.NODE_ENV == "development" && console.log("Error creating clerk:", error);
         return res.status(500).json({ error: error.message });
+    }
+}
+export const getCurrentAdminDetails = (req, res) => {
+    try {
+        // Admin details are hardcoded in the environment variables
+        const adminDetails = {
+            username:req.admin.username,
+            fullname: req.admin.fullname,
+            mobile: req.admin.mobile
+        };
+        res.status(200).json({
+            message: "Admin details fetched successfully",
+            data: adminDetails
+        });
+    } catch (err) {
+        process.env.NODE_ENV == "development" && console.log('error in getCurrentAdminDetails controller', err);
+        res.status(500).json({ error: err.message });
     }
 }

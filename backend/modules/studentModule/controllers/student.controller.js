@@ -1,5 +1,5 @@
 import { DbFunctions } from "../../../shared/lib/db.js";
-import { createRazorpayOrder, getRazorpayKey, verifyRazorpayPayment } from "../../../shared/features/paymentFeature/razorPay.js";
+import { createRazorpayOrder, getRazorpayKey, reverifyRazorpayPayment, verifyRazorpayPayment } from "../../../shared/features/paymentFeature/razorPay.js";
 
 
 //* pay fees controller returns the razorpay order details and razorpay key and payment is verified by the verifyPaymentController and the student details are updated in the database
@@ -30,7 +30,7 @@ export const payFees = async function (req, res) {
             student: studentDetails
         });
     } catch (err) {
-        console.log('error in payFees controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in payFees controller', err);
         res.status(500).json({ error: err.message });
     }
 }
@@ -41,8 +41,14 @@ export const verifyPaymentController = async function (req, res) {
         if (!payment_id || !order_id || !signature) {
             return res.status(400).json({ error: "Invalid payment details" });
         }
-        //checking the signature and updating the student details
-        const isVerified = verifyRazorpayPayment(signature,order_id,payment_id);
+
+
+        // Verify the payment signature
+        let isVerified = verifyRazorpayPayment(signature,order_id,payment_id);
+        //reverification of payment if verification fails by matching the signature
+        if(!isVerified) {
+            isVerified = await reverifyRazorpayPayment(payment_id);
+        }
         if (!isVerified) {
             DbFunctions.payFeesByStudent(req.student.rollNo, req.body.amount, false, req.body.payment_id,req.body.order_id)
             return res.status(400).json({ error: "Payment verification failed",success: false });
@@ -54,9 +60,9 @@ export const verifyPaymentController = async function (req, res) {
         try{
             DbFunctions.payFeesByStudent(req.student.rollNo, req.body.amount, false, req.body.payment_id,req.body.order_id)
         }catch(err){
-            console.log('error in updating student details in verifyPaymentController', err);
+            process.env.NODE_ENV == "development" && console.log('error in updating student details in verifyPaymentController', err);
         }
-        console.log('error in verifyPaymentController', err);
+        process.env.NODE_ENV == "development" && console.log('error in verifyPaymentController', err);
         res.status(500).json({ error: err.message , success: false });
     }
 }
@@ -68,7 +74,50 @@ export const getPreviousTransactions = async function (req, res) {
             transactions: transactions
         });
     } catch (err) {
-        console.log('error in getPreviousTransactions controller', err);
+        process.env.NODE_ENV == "development" && console.log('error in getPreviousTransactions controller', err);
+        res.status(500).json({ error: err.message });
+    }
+}
+export const getCurrentStudentDetails = async function (req, res) {
+    try{
+        const student = await DbFunctions.getStudentByRollNo(req.student.rollNo);
+        if (!student) {
+            return res.status(404).json({ error: "Student not found" });
+        }
+        res.status(200).json({
+            message: "Current student details fetched successfully",
+            data: {
+                rollNo: student.rollNo,
+                name: student.name,
+                mobile: student.mobile,
+                pendingFees: student.pendingFees,
+                fine: student.fine,
+                class: student.degree,
+            }
+        });
+    }catch(err){
+        process.env.NODE_ENV == "development" && console.log('error in getCurrentStudentDetails controller', err);
+        res.status(500).json({ error: err.message });
+    }
+}
+export const reverifyPaymentController = async function (req, res) {
+    try {
+        const { payment_id } = req.body;
+        // Validate the payment details
+        if (!payment_id) {
+            return res.status(400).json({ error: "Invalid payment details" });
+        }
+
+        // Reverify the payment
+        const isVerified = await reverifyRazorpayPayment(payment_id);
+        if(isVerified) {
+            return res.status(200).json({ message: "Payment reverified successfully", success: true });
+        }
+        else {
+            return res.status(400).json({ error: "Payment re-verification failed", success: false });
+        }
+    }catch (err) {
+        process.env.NODE_ENV == "development" && console.log('error in reverifyRazorpayPayment controller', err);
         res.status(500).json({ error: err.message });
     }
 }

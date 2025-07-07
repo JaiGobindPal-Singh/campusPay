@@ -13,7 +13,7 @@ export const validateAccountant = (req, res, next) => {
         req.accountant = accountantData; // Attach accountant data to the request object for further use
         next();
     }catch(err){
-        console.log('error in validateAccountant middleware', err);
+        process.env.NODE_ENV == "development" && console.log('error in validateAccountant middleware', err);
         return res.status(500).json({ error: err.message });
     }
 }

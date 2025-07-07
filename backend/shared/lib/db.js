@@ -56,7 +56,7 @@ export class DbFunctions{
             await student.save();
             return
         }catch(err){
-            console.log("Error in payFeesByStudent db function:", err);
+            process.env.NODE_ENV == "development" && console.log("Error in payFeesByStudent db function:", err);
             throw err;
         }
     }
@@ -80,7 +80,7 @@ export class DbFunctions{
             await student.save();
             return receipt;
         }catch(err){
-            console.log("Error in generateReceipt db function:", err);
+            process.env.NODE_ENV == "development" && console.log("Error in generateReceipt db function:", err);
             throw err;
         }
     }
@@ -93,7 +93,7 @@ export class DbFunctions{
             }
             return student;
         }catch(error){
-            console.log("Error in getStudentDetails db function:", error);
+            process.env.NODE_ENV == "development" && console.log("Error in getStudentDetails db function:", error);
             throw error;
         }
     }
@@ -105,7 +105,7 @@ export class DbFunctions{
             }
             return accountant; 
         }catch(error){
-            console.log("Error in getAccountantDetails db function:", error);
+            process.env.NODE_ENV == "development" && console.log("Error in getAccountantDetails db function:", error);
             throw error;
         }
     }
@@ -127,7 +127,7 @@ export class DbFunctions{
             await accountant.save();
             return accountant;
         }catch(error){
-            console.log("Error in createAccountant db function:", error);
+            process.env.NODE_ENV == "development" && console.log("Error in createAccountant db function:", error);
             throw error;
         }
     }
@@ -152,7 +152,7 @@ export class DbFunctions{
             await student.save();
             return student;
         } catch (error) {
-            console.log("Error in addNewStudent db function:", error);
+            process.env.NODE_ENV == "development" && console.log("Error in addNewStudent db function:", error);
             throw error;
         }
     }
@@ -175,7 +175,7 @@ export class DbFunctions{
             await clerk.save();
             return clerk;
         }catch(err){
-            console.log('error in create new clerk db function;',err);
+            process.env.NODE_ENV == "development" && console.log('error in create new clerk db function;',err);
             throw err;
         }
     }
@@ -187,7 +187,7 @@ export class DbFunctions{
             }
             return student;
         }catch(error){
-            console.log("Error in getStudentByRollNo db function:", error);
+            process.env.NODE_ENV == "development" && console.log("Error in getStudentByRollNo db function:", error);
             throw error;
         }
     }
@@ -220,7 +220,7 @@ export class DbFunctions{
             return this.generateReceipt(rollNo,tempAmount);
             
         }catch(err){
-            console.log("Error in StudentFeePaymentByAccountant db function:", err);
+            process.env.NODE_ENV == "development" && console.log("Error in StudentFeePaymentByAccountant db function:", err);
             throw err;
         }
     }
@@ -241,7 +241,7 @@ export class DbFunctions{
             await student.save();
             return student;
         }catch(err){
-            console.log("Error in UpdateFine db function:", err);
+            process.env.NODE_ENV == "development" && console.log("Error in UpdateFine db function:", err);
             throw err;
         }
     }
@@ -267,7 +267,7 @@ export class DbFunctions{
             await student.save();
             return student;
     }catch(err){
-            console.log("Error in addScholarship db function:", err);
+            process.env.NODE_ENV == "development" && console.log("Error in addScholarship db function:", err);
             throw err;
         }
     }
@@ -279,7 +279,7 @@ export class DbFunctions{
             }
             return clerk;
         }catch(error){
-            console.log("Error in getClerkDetails db function:", error);
+            process.env.NODE_ENV == "development" && console.log("Error in getClerkDetails db function:", error);
             throw error;
         }
     }
@@ -291,7 +291,7 @@ export class DbFunctions{
             }
             return student.previousTransactions;
         }catch(error){
-            console.log("Error in getPreviousTransactions db function:", error);
+            process.env.NODE_ENV == "development" && console.log("Error in getPreviousTransactions db function:", error);
             throw error;
         }
     }
@@ -310,7 +310,7 @@ export class DbFunctions{
                 return newDegree;
             }
         }catch(err){
-            console.log("Error in defineDegreeFees db function:", err);
+            process.env.NODE_ENV == "development" && console.log("Error in defineDegreeFees db function:", err);
             throw err;
         }
 

@@ -11,7 +11,7 @@ export const addNewCourse = async (req, res) => {
             result
         });
     }catch(err){
-        console.log("Error in addNewCourse:", err);
+        process.env.NODE_ENV == "development" && console.log("Error in addNewCourse:", err);
         res.status(500).json({ error:err.message});
     }
     
@@ -28,7 +28,7 @@ export const updateFees = async (req, res) => {
             result
         });
     }catch(err){
-        console.log("Error in update fees:", err);
+        process.env.NODE_ENV == "development" && console.log("Error in update fees:", err);
         res.status(500).json({ error:err.message });
     }
     
@@ -45,7 +45,26 @@ export const addNewStudent = async (req, res) => {
         }
         res.status(201).json({ message: "Student added successfully", data: student });
     }catch(err){
-        console.log("Error in addNewStudent:", err);
+        process.env.NODE_ENV == "development" && console.log("Error in addNewStudent:", err);
         res.status(500).json({ error:err.message });
+    }
+}
+export const getCurrentClerkDetails = (req, res) => {
+    try {
+        const clerk = req.clerk; // accessing clerk data from the request object
+        if (!clerk) {
+            return res.status(404).json({ message: "Clerk not found" });
+        }
+        res.status(200).json({
+            message: "Current clerk details fetched successfully",
+            data: {
+                username: clerk.username,
+                fullname: clerk.fullname,
+                mobile: clerk.mobile,
+            }
+        });
+    } catch (err) {
+        process.env.NODE_ENV == "development" && console.log("Error in getCurrentClerkDetails:", err);
+        res.status(500).json({ error: err.message });
     }
 }
