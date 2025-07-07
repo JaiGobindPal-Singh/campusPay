@@ -24,11 +24,10 @@ export const createNewAccountant = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Error creating accountant:", error);
+        console.log("Error creating accountant:", error);
         return res.status(500).json({error:error.message});
     }
 }
-
 export const createNewClerk = async (req, res) => {
     try {
         // Extracting data from the request body
@@ -54,7 +53,7 @@ export const createNewClerk = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Error creating clerk:", error);
+        console.log("Error creating clerk:", error);
         return res.status(500).json({ error: error.message });
     }
 }

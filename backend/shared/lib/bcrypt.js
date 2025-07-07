@@ -9,8 +9,6 @@ export const verifyPassword = async (password, hash) => {
         throw error;
     }
 }
-
-
 export const hashPassword = async (password) => {
     try {
         const salt = await bcrypt.genSalt(10);

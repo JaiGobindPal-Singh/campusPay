@@ -30,10 +30,12 @@ export const generateTokenForAccountant = (user) => {
         return null;
     }
 }
-
 export const verifyToken = (token) => {
     try {
-        const JWT_SECRET = process.env.JWT_SECRET
+        if (!token) {
+            throw new Error('No token provided');
+        }
+        const JWT_SECRET = process.env.JWT_SECRET;
         return jwt.verify(token, JWT_SECRET);
     } catch (error) {
         throw error;

@@ -16,8 +16,50 @@ export const connectDB = async () => {
          // Exit the process with failure
     }
 }
-
 export class DbFunctions{
+    static async payFeesByStudent(rollNo, amount,status,paymentId,orderId) {
+        try{
+            const tempAmount = amount; 
+            const student = await studentModel.findOne({ rollNo });
+            if(status){
+                if (!student) {
+                    throw new Error("Student not found");
+                }
+                // Update the student's pending fees and fine
+                if(amount > (student.pendingFees + student.fine)){
+                    throw new Error("Amount exceeds pending fees");
+                }
+                if(amount >= student.pendingFees){
+                    amount -= student.pendingFees;
+                    student.pendingFees = 0;
+                }else{
+                    student.pendingFees -= amount;
+                    amount = 0;
+                }
+                student.fine -= amount;
+                
+                //handle negative fine 
+                if(student.fine < 0) {
+                    student.fine = 0; 
+                }
+            }
+            student.previousTransactions.push({
+                id: generateUniqueId(),
+                amount: tempAmount,
+                date: new Date(),  
+                online :{
+                    status: status? 'success':'pending',
+                    paymentId,
+                    orderId
+                }
+            })
+            await student.save();
+            return
+        }catch(err){
+            console.log("Error in payFeesByStudent db function:", err);
+            throw err;
+        }
+    }
     static async generateReceipt(rollNo, amount,) {
         try{
             const student = await studentModel.findOne({ rollNo });
@@ -26,7 +68,7 @@ export class DbFunctions{
             }
             // Create a new receipt object
             const receipt = {
-                id: generateUniqueId(10),
+                id: generateUniqueId(),
                 amount,
                 date: new Date()  // Creates a Date object with current date and time
             };
@@ -229,7 +271,7 @@ export class DbFunctions{
             throw err;
         }
     }
-    static async getClerkDetails(username, password) {
+    static async getClerkDetails(username) {
         try{
             const clerk =await clerkModel.findOne({ username});
             if (!clerk) {

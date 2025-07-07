@@ -1,8 +1,8 @@
 import { DbFunctions } from "../../../shared/lib/db.js";
 export const payFees = async (req, res) => {
     try{
-        const { rollNo, amount } = req.body;
-
+        let { rollNo, amount } = req.body;
+        amount = Number(amount);
         // Validate input
         if (!rollNo || !amount || isNaN(amount) || amount <= 0) {
             return res.status(400).json({ message: "Roll number and amount are required" });
@@ -63,7 +63,6 @@ export const getPreviousTransactions = async (req, res) => {
         return res.status(500).json({ error:err.message });
     }
 }
-
 export const printReceipt = async (req, res) => {
     try{
         const {receiptId, rollNo} = req.body;
@@ -89,11 +88,10 @@ export const printReceipt = async (req, res) => {
     }
 
 }
-
 export const addFine = async (req, res) => {
     try{
-        const { rollNo, fineAmount } = req.body;
-
+        let { rollNo, fineAmount } = req.body;
+        fineAmount = Number(fineAmount);
         // Validate input
         if (!rollNo || !fineAmount || isNaN(fineAmount) || fineAmount <= 0) {
             return res.status(400).json({ message: "Roll number and fine amount are required" });
@@ -112,11 +110,11 @@ export const addFine = async (req, res) => {
         return res.status(500).json({ error: err.message });
     }
 }
-
 export const scholarship = async (req, res) => {
     try{
-       const { rollNo, scholarshipAmount } = req.body;
-       if(!rollNo || !scholarshipAmount || isNaN(scholarshipAmount) || scholarshipAmount <= 0) {
+        let { rollNo, scholarshipAmount } = req.body;
+        scholarshipAmount = Number(scholarshipAmount);
+        if(!rollNo || !scholarshipAmount || isNaN(scholarshipAmount) || scholarshipAmount <= 0) {
             return res.status(400).json({ message: "Roll number and scholarship amount are required" });
         }
         const result = await DbFunctions.addScholarship(rollNo, scholarshipAmount);

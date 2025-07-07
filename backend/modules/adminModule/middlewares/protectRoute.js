@@ -14,7 +14,7 @@ export const validateAdmin = (req, res, next) => {
         // If the cookie is present, proceed to the next middleware or route handler
         next();
     } catch (error) {
-        console.error("Error in admin validation middleware:", error);
+        console.log("Error in admin validation middleware:", error);
         return res.status(500).json({ error: error.message });
     }
 }

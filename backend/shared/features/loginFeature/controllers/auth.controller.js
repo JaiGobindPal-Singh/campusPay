@@ -1,6 +1,11 @@
 import { generateTokenForStudent, verifyToken, generateTokenForAccountant } from "../../../lib/jwt.js";
 import { DbFunctions } from "../../../lib/db.js";
 import { verifyPassword } from "../../../lib/bcrypt.js";
+const cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+}
 export const studentLogin = async (req, res) => {
     try {
         const { rollNo, mobile } = req.body;
@@ -20,7 +25,7 @@ export const studentLogin = async (req, res) => {
             rollNo: student.rollNo,
             mobile: student.mobile,
         });
-        res.cookie("student", token);
+        res.cookie("student",token,cookieOptions);
         res.status(200).json({
             message: "Student login successful",
             data: {
@@ -34,7 +39,7 @@ export const studentLogin = async (req, res) => {
         })
     } catch (err) {
         console.log('error in student login controller');
-        res.status(500).json({ error:err.message});
+        res.status(500).json({ error:err});
     }
 };
 export const accountantLogin = async (req, res) => {
@@ -58,11 +63,12 @@ export const accountantLogin = async (req, res) => {
         }
 
         //sending the response with accountant data and setting a cookie
-        res.cookie("accountant", generateTokenForAccountant({
+        const token =generateTokenForAccountant({
             username: accountant.username,
             fullname: accountant.fullname,
             mobile: accountant.mobile,
-        }));
+        })
+        res.cookie("accountant",token,cookieOptions);
         return res.status(200).json({
             message: "Accountant login successful",
             data: {
@@ -76,10 +82,8 @@ export const accountantLogin = async (req, res) => {
         res.status(400).json({ error:err.message });
     }
 };
-
 export const adminLogin = (req, res) => {
     try {
-
         const { username, password } = req.body;
         if (!username || !password) {
             return res.status(400).json({ message: "Username and password are required" });
@@ -94,7 +98,7 @@ export const adminLogin = (req, res) => {
             fullname: "Admin",
             mobile: "0000000000",
         });
-        res.cookie("admin", token);
+        res.cookie("admin", token,cookieOptions);
         return res.status(200).json({
             message: "Admin login successful",
             data: {
@@ -108,7 +112,6 @@ export const adminLogin = (req, res) => {
         return res.status(500).json({ error:err.message });
     }
 }
-
 export const clerkLogin = async (req, res) => {
     try{
         const {username, password} = req.body;
@@ -132,7 +135,7 @@ export const clerkLogin = async (req, res) => {
             fullname: clerk.fullname,
             mobile: clerk.mobile,
         });
-        res.cookie("clerk",token);
+        res.cookie("clerk",token,cookieOptions);
         return res.status(200).json({
             message: "Clerk login successful",
             data: {
