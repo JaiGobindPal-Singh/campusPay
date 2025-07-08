@@ -1,9 +1,13 @@
 import { DbFunctions } from "../../../shared/lib/db.js";
 export const addNewCourse = async (req, res) => {
     try{
-        const { course, fees } = req.body;
+        let { course, fees } = req.body;
         if (!course || !fees) {
             return res.status(400).json({ message: "Course name and fees are required" });
+        }
+        fees = parseFloat(fees);
+        if (isNaN(fees) || fees <= 0) {
+            return res.status(400).json({ message: "Fees must be a valid positive number" });
         }
         const result = await DbFunctions.defineDegreeFees(course, fees);
         res.status(201).json({
@@ -18,9 +22,13 @@ export const addNewCourse = async (req, res) => {
 }
 export const updateFees = async (req, res) => {
     try{
-        const { course, fees } = req.body;
+        let { course, fees } = req.body;
         if (!course || !fees) {
             return res.status(400).json({ message: "Course name and fees are required" });
+        }
+        fees = parseFloat(fees);
+        if (isNaN(fees) || fees <= 0) {
+            return res.status(400).json({ message: "Fees must be a valid positive number" });
         }
         const result = await DbFunctions.defineDegreeFees(course, fees);
         res.status(201).json({

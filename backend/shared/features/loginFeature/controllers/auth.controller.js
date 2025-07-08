@@ -57,7 +57,7 @@ export const accountantLogin = async (req, res) => {
         if (!accountant) {
             return res.status(404).json({ message: "Accountant not found" });
         }
-        const isPasswordMatch = verifyPassword(password, accountant.password);
+        const isPasswordMatch = await verifyPassword(password, accountant.password);
         if (!isPasswordMatch) {
             return res.status(401).json({ message: "Invalid username or password" });
         }
@@ -121,10 +121,9 @@ export const clerkLogin = async (req, res) => {
         //fetching the clerk data from the database
         const clerk =await DbFunctions.getClerkDetails(username);
         if(!clerk){
-            return res.status(404).json({ message: "Clerk not found" });
+            return res.status(404).json({ message: "Invalid username or password" });
         }
-        process.env.NODE_ENV == "development" && console.log(clerk)
-        const isPasswordMatch = verifyPassword(password, clerk.password);
+        const isPasswordMatch = await verifyPassword(password, clerk.password);
         if(!isPasswordMatch){
             return res.status(401).json({ message: "Invalid username or password" });
         }
