@@ -1,6 +1,6 @@
 {
      "public": "dist",
      "routes": {
-          "/**": "./dist/index.html"
+          "/**": "./index.html"
      }
 }
