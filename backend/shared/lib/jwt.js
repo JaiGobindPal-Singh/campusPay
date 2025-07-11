@@ -6,9 +6,7 @@ export const generateTokenForStudent = async (student) => {
         const token = jwt.sign({
             rollNo: student.rollNo,
             mobile: student.mobile
-        }, JWT_SECRET, {
-            expiresIn: '12h'
-        })
+        }, JWT_SECRET)
         return token;
     } catch (err) {
         process.env.NODE_ENV == "development" && console.log('error in generating token for student', err);
@@ -22,9 +20,7 @@ export const generateTokenForAccountant = (user) => {
             username: user.username,
             fullname: user.fullname,
             mobile: user.mobile
-        }, JWT_SECRET, {
-            expiresIn: '24h'
-        })
+        }, JWT_SECRET)
         return token;
     } catch (err) {
         process.env.NODE_ENV == "development" && console.log('error in generating token for accountant', err);

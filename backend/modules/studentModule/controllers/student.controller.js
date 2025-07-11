@@ -42,7 +42,6 @@ export const verifyPaymentController = async function (req, res) {
             return res.status(400).json({ error: "Invalid payment details" });
         }
 
-
         // Verify the payment signature
         let isVerified = verifyRazorpayPayment(signature,order_id,payment_id);
         //reverification of payment if verification fails by matching the signature
