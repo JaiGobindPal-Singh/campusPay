@@ -1,6 +1,6 @@
 import Navbar from "../layouts/Navbar";
 import { useSelector } from "react-redux";
-import Razorpay from "../features/onlinePayment/razorpay/razorpay";
+import Razorpay from "../features/onlinePayment/razorpay/razorpay.jsx";
 import { useState } from "react";
 
 const StudentPanel = () => {
