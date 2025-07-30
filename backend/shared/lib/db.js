@@ -3,6 +3,7 @@
 import mongoose from "mongoose";
 import studentModel from "../models/student.model.js";
 import accountantModel from "../models/accountant.model.js";
+import transactionModel from "../models/transaction.model.js";
 import clerkModel from "../models/clerk.model.js";
 import degreeModel from "../models/degree.model.js";
 import { hashPassword } from "./bcrypt.js";
@@ -54,6 +55,15 @@ export class DbFunctions{
                 }
             })
             await student.save();
+            // Create a transaction record in the database
+            await transactionModel.create({
+                studentId: student._id,
+                amount: tempAmount,
+                date: new Date(),
+                status: status ? 'success' : 'pending',
+                paymentId,
+                orderId
+            });
             return
         }catch(err){
             process.env.NODE_ENV == "development" && console.log("Error in payFeesByStudent db function:", err);
@@ -315,5 +325,15 @@ export class DbFunctions{
         }
 
     }
+    static async getTransactionsByPendingStatus(){
+        try{
+            const transactions = await transactionModel.find({ status: 'pending' });
+            return transactions;
+        }catch(err){
+            process.env.NODE_ENV == "development" && console.log("Error in getTransactionsByPendingStatus db function:", err);
+            throw err;
+        }
+    }
+
     
 }

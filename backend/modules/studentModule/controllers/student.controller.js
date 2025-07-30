@@ -34,6 +34,7 @@ export const payFees = async function (req, res) {
         res.status(500).json({ error: err.message });
     }
 }
+//verify payment controller verifies the payment and updates the student details in the database 
 export const verifyPaymentController = async function (req, res) {
     try {
         const { payment_id, order_id, signature} = req.body;
